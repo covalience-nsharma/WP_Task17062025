@@ -9,7 +9,7 @@ services:
       MYSQL_DATABASE: wordpress_db
       MYSQL_USER: wordpress_user
       MYSQL_PASSWORD: P@55word
-     # MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: P@55word
     volumes:
       - db_data:/var/lib/mysql
 
