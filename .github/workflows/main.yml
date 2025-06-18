@@ -30,7 +30,7 @@ jobs:
 
       - name: Generate SSL certificate with Certbot
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<EOF
             sudo docker run --rm -it \
               -v /home/${{ secrets.SSH_USER }}/wordpress-docker/nginx/certs:/etc/letsencrypt/live/training.covalience.tech \
               -v /home/${{ secrets.SSH_USER }}/wordpress-docker/nginx/certbot/www:/var/www/certbot \
@@ -39,7 +39,7 @@ jobs:
               --email ${{ secrets.LETSENCRYPT_EMAIL }} \
               --agree-tos --no-eff-email \
               -d training.covalience.tech
-          '
+          EOF
 
       - name: Reload Nginx to use new certificate
         run: |
