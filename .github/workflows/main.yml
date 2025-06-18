@@ -1,0 +1,48 @@
+name: Deploy WordPress Docker
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Copy files to server
+        run: |
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/wordpress-docker
+
+      - name: Deploy with Docker Compose
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            cd /home/${{ secrets.SSH_USER }}/wordpress-docker &&
+            docker compose up -d --build
+          '
+
+      - name: Generate SSL certificate with Certbot
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            sudo docker run --rm -it \
+              -v /home/${{ secrets.SSH_USER }}/wordpress-docker/nginx/certs:/etc/letsencrypt/live/training.covalience.tech \
+              -v /home/${{ secrets.SSH_USER }}/wordpress-docker/nginx/certbot/www:/var/www/certbot \
+              certbot/certbot certonly --webroot \
+              --webroot-path=/var/www/certbot \
+              --email ${{ secrets.LETSENCRYPT_EMAIL }} \
+              --agree-tos --no-eff-email \
+              -d training.covalience.tech
+          '
+
+      - name: Reload Nginx to use new certificate
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            docker exec nginx nginx -s reload
+          '
