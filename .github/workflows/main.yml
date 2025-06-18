@@ -39,6 +39,7 @@ jobs:
               --email ${{ secrets.LETSENCRYPT_EMAIL }} \
               --agree-tos --no-eff-email \
               -d training.covalience.tech
+              exit
           EOF
 
       - name: Reload Nginx to use new certificate
