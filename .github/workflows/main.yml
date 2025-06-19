@@ -19,7 +19,7 @@ jobs:
 
       - name: Copy files to server
         run: |
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/wordpress-docker
+          rsync -avz --partial --progress -e "ssh -o StrictHostKeyChecking=no" . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/wordpress-docker
 
       - name: Create Dummy Certificates
         run: |
