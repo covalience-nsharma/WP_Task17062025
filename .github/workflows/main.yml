@@ -25,7 +25,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
             sudo openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
-              -keyout "/home/ubuntu/wordpress-docker/nginx/certs/live/training.covalience.tech/privkey.pem" \
+              -keyout "/home/${{ secrets.SSH_USER }}/wordpress-docker/nginx/certs/live/training.covalience.tech/privkey.pem" \
               -out "/home/ubuntu/wordpress-docker/nginx/certs/live/training.covalience.tech/fullchain.pem" \
               -subj "/CN=training.covalience.tech" # Use your actual domain or 'localhost'
           '
