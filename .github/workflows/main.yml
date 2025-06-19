@@ -24,6 +24,7 @@ jobs:
       - name: Create Dummy Certificates
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            mkdir -p "/home/${{ secrets.SSH_USER }}/wordpress-docker/nginx/certs/live/training.covalience.tech"
             sudo openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
               -keyout "/home/${{ secrets.SSH_USER }}/wordpress-docker/nginx/certs/live/training.covalience.tech/privkey.pem" \
               -out "/home/ubuntu/wordpress-docker/nginx/certs/live/training.covalience.tech/fullchain.pem" \
