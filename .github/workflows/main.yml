@@ -47,7 +47,7 @@ jobs:
               -v /home/$SSH_USER/wordpress-docker/certbot/www:/var/www/certbot \
               certbot/certbot certonly --webroot \
               --webroot-path=/var/www/certbot \
-              --email $LETSENCRYPT_EMAIL \
+              --email ${{ secrets.LETSENCRYPT_EMAIL }}\
               --agree-tos --no-eff-email \
               -d training.covalience.tech
           EOF
