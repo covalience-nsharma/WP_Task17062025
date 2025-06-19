@@ -21,6 +21,15 @@ jobs:
         run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/wordpress-docker
 
+      - name: Create Dummy Certificates
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            sudo openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
+              -keyout "/home/ubuntu/wordpress-docker/nginx/certs/live/training.covalience.tech/privkey.pem" \
+              -out "/home/ubuntu/wordpress-docker/nginx/certs/live/training.covalience.tech/fullchain.pem" \
+              -subj "/CN=training.covalience.tech" # Use your actual domain or 'localhost'
+          '
+
       - name: Deploy with Docker Compose
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
@@ -32,8 +41,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<EOF
             sudo docker run --rm \
-              -v /home/${{ secrets.SSH_USER }}/wordpress-docker/certbot/conf:/etc/letsencrypt \
-              -v /home/${{ secrets.SSH_USER }}/wordpress-docker/certbot/www:/var/www/certbot \
+              -v /home/ubuntu/wordpress-docker/nginx/certs:/etc/letsencrypt \
+              -v /home/ubuntu/wordpress-docker/certbot-webroot:/var/www/certbot \
               certbot/certbot certonly --webroot \
               --webroot-path=/var/www/certbot \
               --email ${{ secrets.LETSENCRYPT_EMAIL }} \
