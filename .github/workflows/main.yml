@@ -38,21 +38,21 @@ jobs:
             sudo docker compose up -d --build
           '
 
-      # - name: Generate SSL certificate with Certbot
-      #   run: |
-      #     ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<EOF
-      #       sudo docker run --rm \
-      #         -v /home/ubuntu/wordpress-docker/nginx/certs:/etc/letsencrypt \
-      #         -v /home/ubuntu/wordpress-docker/certbot-webroot:/var/www/certbot \
-      #         certbot/certbot certonly --webroot \
-      #         --webroot-path=/var/www/certbot \
-      #         --email ${{ secrets.LETSENCRYPT_EMAIL }} \
-      #         --agree-tos --no-eff-email \
-      #         -d training.covalience.tech
-      #     EOF
+      - name: Generate SSL certificate with Certbot
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<EOF
+            sudo docker run --rm \
+              -v /home/ubuntu/wordpress-docker/nginx/certs:/etc/letsencrypt \
+              -v /home/ubuntu/wordpress-docker/certbot-webroot:/var/www/certbot \
+              certbot/certbot certonly --webroot \
+              --webroot-path=/var/www/certbot \
+              --email ${{ secrets.LETSENCRYPT_EMAIL_NEW }} \
+              --agree-tos --no-eff-email \
+              -d training.covalience.tech
+          EOF
 
-      # - name: Reload Nginx to use new certificate
-      #   run: |
-      #     ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-      #       sudo docker exec nginx nginx -t
-      #     '
+      - name: Reload Nginx to use new certificate
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            sudo docker exec nginx nginx -t
+          '
