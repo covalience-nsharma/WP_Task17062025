@@ -51,8 +51,8 @@ jobs:
       #         -d training.covalience.tech
       #     EOF
 
-      # - name: Reload Nginx to use new certificate
-      #   run: |
-      #     ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-      #       docker exec nginx nginx -s reload
-      #     '
+      - name: Reload Nginx to use new certificate
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            docker exec nginx nginx -s reload
+          '
