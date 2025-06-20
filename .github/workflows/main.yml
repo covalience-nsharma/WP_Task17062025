@@ -54,5 +54,5 @@ jobs:
       - name: Reload Nginx to use new certificate
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-            sudo docker exec nginx nginx -s reload
+            sudo docker exec nginx nginx -t
           '
