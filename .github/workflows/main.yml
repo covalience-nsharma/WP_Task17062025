@@ -21,15 +21,15 @@ jobs:
         run: |
           rsync -avz --partial --progress -e "ssh -o StrictHostKeyChecking=no" . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/wordpress-docker
 
-      - name: Create Dummy Certificates
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-            mkdir -p "/home/${{ secrets.SSH_USER }}/wordpress-docker/nginx/certs/live/training.covalience.tech"
-            sudo openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
-              -keyout "/home/${{ secrets.SSH_USER }}/wordpress-docker/nginx/certs/live/training.covalience.tech/privkey.pem" \
-              -out "/home/ubuntu/wordpress-docker/nginx/certs/live/training.covalience.tech/fullchain.pem" \
-              -subj "/CN=training.covalience.tech" # Use your actual domain or 'localhost'
-          '
+      # - name: Create Dummy Certificates
+      #   run: |
+      #     ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+      #       mkdir -p "/home/${{ secrets.SSH_USER }}/wordpress-docker/nginx/certs/live/training.covalience.tech"
+      #       sudo openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
+      #         -keyout "/home/${{ secrets.SSH_USER }}/wordpress-docker/nginx/certs/live/training.covalience.tech/privkey.pem" \
+      #         -out "/home/ubuntu/wordpress-docker/nginx/certs/live/training.covalience.tech/fullchain.pem" \
+      #         -subj "/CN=training.covalience.tech" # Use your actual domain or 'localhost'
+      #     '
 
       - name: Deploy with Docker Compose
         run: |
@@ -38,21 +38,21 @@ jobs:
             sudo docker compose up -d --build
           '
 
-      - name: Generate SSL certificate with Certbot
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<EOF
-            sudo docker run --rm \
-              -v /home/ubuntu/wordpress-docker/nginx/certs:/etc/letsencrypt \
-              -v /home/ubuntu/wordpress-docker/certbot-webroot:/var/www/certbot \
-              certbot/certbot certonly --webroot \
-              --webroot-path=/var/www/certbot \
-              --email ${{ secrets.LETSENCRYPT_EMAIL }} \
-              --agree-tos --no-eff-email \
-              -d training.covalience.tech
-          EOF
+      # - name: Generate SSL certificate with Certbot
+      #   run: |
+      #     ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<EOF
+      #       sudo docker run --rm \
+      #         -v /home/ubuntu/wordpress-docker/nginx/certs:/etc/letsencrypt \
+      #         -v /home/ubuntu/wordpress-docker/certbot-webroot:/var/www/certbot \
+      #         certbot/certbot certonly --webroot \
+      #         --webroot-path=/var/www/certbot \
+      #         --email ${{ secrets.LETSENCRYPT_EMAIL }} \
+      #         --agree-tos --no-eff-email \
+      #         -d training.covalience.tech
+      #     EOF
 
-      - name: Reload Nginx to use new certificate
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-            docker exec nginx nginx -s reload
-          '
+      # - name: Reload Nginx to use new certificate
+      #   run: |
+      #     ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+      #       docker exec nginx nginx -s reload
+      #     '
